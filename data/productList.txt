@@ -1,0 +1,4 @@
+SMP001;Iphone 12;Apple
+SMP002;Samsung Galaxy; Samsung
+SMP003;Oppo A5;Oppo
+SMP004;Iphone 10;Apple

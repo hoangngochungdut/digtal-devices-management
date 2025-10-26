@@ -1,0 +1,7 @@
+SMP;Smartphone
+LAP;Laptop
+TAB;Tablet
+WAT;Watch
+SMW;Smartwatch
+MON;Monitor
+CAM;Camera
