@@ -1,4 +1,5 @@
 #include "Store.h"
+#include "Item.h"
 #include <iostream>
 #include <iomanip>
 using namespace std;
@@ -19,8 +20,9 @@ void menu() {
 int main() {
     Store x;
     int option;
+    int exit;
     do {
-        int exit = 0;
+        exit = 0;
         menu();
         cout << "Please enter your option: ";
         cin >> option;

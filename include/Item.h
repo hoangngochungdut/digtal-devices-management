@@ -3,12 +3,21 @@
 #include "Product.h"
 
 class Item: public Product{
-    int price;
-    int warranty;
-    int discount;
+    int sellPrice;
     int quantity;
+    int total;
     public: 
-        void enterInfo();
+        void setQuantity(int a);
+        void setSellPrice(int a);
+        void setTotal();
+
+        int getTotal() {
+            return this->total;
+        }
+        bool getSellPrice();
         void printInfo();
 };
+
+int getQuantity(const string &ID);
+
 #endif

@@ -7,13 +7,24 @@
 using namespace std;
 
 class Product{
-    protected:
+    protected: 
         string productID;
         string productName;
         string productBrand;
+        int costPrice;
     public:
-        void enterInfo();
+        void setID(const string &s);
+        void setName(const string &s);
+        void setBrand(const string &s);
+        void setCostPrice(int a);
+        
+        void update(); 
         void printInfo();
         
 };
+
+bool existedID(const string &ID);
+bool existedName(const string &name);
+bool matchedNameID(const string &name, const string &ID);
+
 #endif
