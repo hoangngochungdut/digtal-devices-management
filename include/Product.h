@@ -12,19 +12,23 @@ class Product{
         string productName;
         string productBrand;
         int costPrice;
+        int costTotal;
     public:
-        void setID(const string &s);
-        void setName(const string &s);
-        void setBrand(const string &s);
-        void setCostPrice(int a);
+        void setID(const string &s) {this->productID = s;}
+        string getID() {return this->productID;}
+
+        void setName(const string &s) {this->productName = s;}
+        string getName() {return this->productName;}
+
+        void setBrand(const string &s) {this->productBrand = s;}
+        string getBrand() {return this->productBrand;}
+
+        void setCostPrice(int a) {this->costPrice = a;}
+        int getCostPrice() {return this->costPrice;}
         
-        void update(); 
         void printInfo();
         
 };
 
-bool existedID(const string &ID);
-bool existedName(const string &name);
-bool matchedNameID(const string &name, const string &ID);
 
 #endif

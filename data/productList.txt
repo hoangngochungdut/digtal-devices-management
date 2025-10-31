@@ -1,5 +1,6 @@
 SMP001;Iphone 12;Apple;1000
-SMP002;Samsung Galaxy; Samsung;1500
+SMP002;Samsung Galaxy;Samsung;1500
 SMP003;Oppo A5;Oppo;1200
 SMP004;Iphone 10;Apple;2500
-SMP150;Iphone 16;Apple
+SMP005;Iphone 16;Apple;1200
+LAP001;Laptop Lenovo;Lenovo;2000

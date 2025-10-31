@@ -2,6 +2,7 @@
 #include "Product.h"
 #include "Item.h"
 #include "string_util.h"
+#include "file_util.h"
 
 #include <iostream>
 #include <vector>
@@ -11,165 +12,249 @@
 using namespace std;
 
 void Store::import() {
-
-}
-
-void Store::sell() {
-    int n, count = 0;
-    cout << "Enter the number of products you want to sell (enter 0 to escape): ";
+    int n;
+    cout << "Enter the number of products you want to import (enter 0 to escape): ";
     cin >> n;
+    cin.ignore();
+
     if (n == 0) {
         cout << "Escaped!\n";
         return;
     }
-    cin.ignore();
-    vector <Item> items(n);
-    int N = n;
-    
-    //Nhap thong tin
-    while(n) {
-        string name, ID;
-        int quant;
-        cout << count + 1 << ".\n";
 
-        bool exitName = false;
-        do {
-            cout << "Enter the product name (enter q to skip): ";
-            getline(cin, name);
+    vector<Item> items;
+    items.reserve(n); 
 
-            if (name == "q") {
-                n--;
-                count++;
-                exitName = true;
-                cout << "Skipped!\n";
-                continue;
-            }
+    for (int i = 0; i < n; i++) {
+        cout << "\nProduct " << i + 1 << ":\n";
 
-            if(!existedName(name)) cout << "There is no \"" << name << "\" in store, please try a new name.\n";
-            else {
-                
-                bool exitID = false;
-                do {
-                    cout << "Enter the product ID (enter q to skip): ";
-                    getline(cin, ID);
+        string name, ID, brand;
+        int costPrice, quant;
 
-                    if (ID == "q") {
-                    n--;
-                    count++;
-                    exitID = true;
-                    cout << "Skipped!\n";
-                    continue;
-                    }
-                    
-                    if(!matchedNameID(name, ID)) cout << "There is no product has ID: " << ID << ", please try a new ID.\n";
-                    else {
-                    int _quant = getQuantity(ID), quant = 0;
-                    
-                    bool exitQuant = false;
-                    do {
-                        cout << "Enter quantity: ";
-                        cin >> quant;
-                        cin.ignore();
-
-                        if (quant > _quant) cout << "There are only " << _quant << " left!\n";
-                        else if (quant <= 0) cout << "Invalid quantity!\n";
-                        else {
-                            items[count].setName(capitalize(name));
-                            items[count].setID(upper(ID));
-                            items[count].setQuantity(quant);
-                            items[count].getSellPrice();
-                            items[count].setTotal();
-
-                            n--;
-                            count++;
-
-                            exitQuant = true;
-                            exitID = true;
-                            exitName = true;
-                        }
-                    } while(!exitQuant);
-
-                    }
-                } while(!exitID);
-            }
-
-        } while(!exitName);
-    }
-
-    if(count) {
-        cout << "\n";
-
-        //Tong hop
-        int S = 0;
-        for (int i = 0; i < N; i++) {
-            cout << i + 1 << ".\n";
-            items[i].printInfo();
-            S+= items[i].getTotal();
+        cout << "Enter the product name (enter q to skip): ";
+        getline(cin, name);
+        if (name == "q") {
+            cout << "Skipped!\n";
+            continue;
         }
-        cout << "\nGrand total: " << S << "\n"; 
+
+        cout << "Enter the product ID (enter q to skip): ";
+        getline(cin, ID);
+        if (ID == "q") {
+            cout << "Skipped!\n";
+            continue;
+        }
+
+        if (!matchedNameID(name, ID)) {
+            i--;
+            cout << "This ID already existed. Please try again\n";
+            continue;
+        }
+
+        cout << "Enter the product's brand (enter q to skip): ";
+        getline(cin, brand);
+        if (brand == "q") {
+            cout << "Skipped!\n";
+            continue;
+        }
+
+        cout << "Enter the cost price: ";
+        cin >> costPrice;
+        if (costPrice < 0) {
+            cout << "Invalid cost price! Skipped!\n";
+            cin.ignore();
+            continue;
+        }
+
+        cout << "Enter quantity: ";
+        cin >> quant;
+        cin.ignore();
+        if (quant <= 0) {
+            cout << "Invalid quantity! Skipped!\n";
+            continue;
+        }
+
+        // Luu san pham
+        Item item;
+        item.setName(capitalize(name));
+        item.setID(upper(ID));
+        item.setBrand(capitalize(brand));
+        item.setCostPrice(costPrice);
+        item.setSellPrice(0);
+        item.setQuantity(quant);
+        item.setCostTotal();
+
+        items.push_back(item);
     }
 
-
+    if (!items.empty()) {
+        cout << "\n===IMPORT SUMARY===:\n";
+        int grandTotal = 0;
+        for (int i = 0; i < items.size(); i++) {
+            cout << i + 1 << ".\n";
+            items[i].printInfoAfterImport();
+            grandTotal += items[i].getCostTotal();
+        }
+        cout << "\nGrand total: " << grandTotal << "\n";
+        updateAfterImport(items);
+    } else {
+        cout << "No product imported.\n";
+    }
 }
 
-// void Store::sell() {
-//     int n, count = 1;
-//     cout << "Enter the number of products you want to sell (enter 0 to escape): ";
-//     cin >> n;
-//     if (n == 0) cout << "Escaped!\n";
-//     cin.ignore();
-//     vector <Item> items(n);
-//     while(n) {
-//         string name, ID;
-//         int quant;
-//         cout << count << ".\n";
+void Store::sell() {
+    int n;
+    cout << "Enter the number of products you want to sell (enter 0 to escape): ";
+    cin >> n;
+    cin.ignore();
+    if (n == 0) {
+        cout << "Escaped!\n";
+        return;
+    }
 
-//         do {
-//             cout << "Enter the product name (enter q to skip): ";
-//             getline(cin, name);
+    vector<Item> items;
+    items.reserve(n);
 
-//             if (name == "q") {
-//                 n--;
-//                 count++;
-//                 cout << "Skipped!\n";
-//                 continue;
-//             }
-            
-//             if(existedName(name)) {
-//                 cout << "Enter the product ID (enter q to skip): ";
-//                 getline(cin, ID);
+    for (int i = 0; i < n; i++) {
+        cout << "\nProduct " << i + 1 << ":\n";
+        string name, ID;
+        int quant;
 
-//                 if (ID == "q") {
-//                 n--;
-//                 count++;
-//                 cout << "Skipped!\n";
-//                 continue;
-//                 }
-    
-//                 if(matchedNameID(name, ID)) {
-//                     int quant = getQuantity(ID);
-//                     if (!quant) {
-//                         cout << "This product is out of store!\n";
-//                         n--;
-//                         count++;
-//                         continue;
-//                     }
-//                     int _quant = 0;
-//                     do {
-//                         cout << "Enter quantity: ";
-//                         cin >> _quant;
-//                         cin.ignore();
-//                         if (_quant > quant) cout << "There is only " << quant << " left!\n";
-//                     } while(_quant > quant);
-//                 } else cout << "There is no product has ID: " << ID << ", please try a new ID.\n";
-//             } else cout << "There is no \"" << name << "\" in store, please try a new name.\n";
-//         } while(true);
-//     }   
-// }
+        cout << "Enter the product name (enter q to skip): ";
+        getline(cin, name);
+        if (name == "q") {
+            cout << "Skipped!\n";
+            continue;
+        }
+
+        if (!existedName(name)) {
+            cout << "There is no \"" << name << "\" in store, please try again.\n";
+            i--; // cho nhập lại sản phẩm này
+            continue;
+        }
+
+        cout << "Enter the product ID (enter q to skip): ";
+        getline(cin, ID);
+        if (ID == "q") {
+            cout << "Skipped!\n";
+            continue;
+        }
+
+        if (!matchedNameID(name, ID)) {
+            cout << "This ID \"" << ID << "\" does not match the name.\n";
+            i--; // cho nhập lại sản phẩm này
+            continue;
+        }
+
+        int stock = getQuantity(ID);
+        cout << "Enter quantity: ";
+        cin >> quant;
+        cin.ignore();
+
+        if (quant > stock) {
+            cout << "There are only " << stock << " left in stock!\n";
+            i--;
+            continue;
+        }
+
+        if (quant <= 0) {
+            cout << "Invalid quantity!\n";void updateNewProduct(Product x);
+            i--;
+            continue;
+        }
+
+        // tạo item và thêm vào danh sách
+        Item item;
+        item.setName(capitalize(name));
+        item.setID(upper(ID));
+        item.setQuantity(quant);
+        item.setSellPrice(getSellPrice(item.getID()));
+        item.setSellTotal();
+
+        items.push_back(item);
+    }
+
+    if (!items.empty()) {
+        cout << "\n=== SELL SUMMARY ===\n";
+        int totalRevenue = 0;
+
+        for (int i = 0; i < items.size(); i++) {
+            cout << i + 1 << ".\n";
+            items[i].printInfoAfterSell();
+            totalRevenue += items[i].getSellTotal();
+        }
+
+        cout << "\nGrand total: " << totalRevenue << "\n";
+
+        updateAfterSell(items);
+    } else {
+        cout << "No product sold.\n";
+    }
+}
 
 void Store::showStatictics() {
 
 }
+
+void Store::search() {
+    
+}
+
+void Store::searchWithCategory() {
+    string category;
+    cout << "Enter category: ";
+    getline(cin, category);
+
+    string ID = getCategoryID(category);
+
+    ifstream in("data/productList.txt");
+    string line;
+
+    while (getline(in, line)) {
+        stringstream ss(line);
+        string _ID, name, brand;
+        getline(ss, _ID, ';');
+        getline(ss, name, ';');
+        getline(ss, brand, ';');
+
+        // kiểm tra ID có trùng 3 ký tự đầu không
+        if (_ID.size() >= 3 && _ID.substr(0, 3) == ID) {
+            string sellPrice, quant;
+
+            ifstream in1("data/item.txt");
+            string line1;
+            while (getline(in1, line1)) {
+                stringstream ss1(line1);
+                string ID1;
+                getline(ss1, ID1, ';');
+                if (ID1 == _ID) {
+                    getline(ss1, sellPrice, ';');
+                    getline(ss1, quant, ';');
+                    break; // tìm thấy rồi thì dừng
+                }
+            }
+            in1.close();
+
+            cout << "\nProduct name: " << name << "\n";
+            cout << "Product brand: " << brand << "\n";
+            cout << "Price: " << sellPrice << "\n";
+            cout << "Quantity: " << quant << "\n";
+        }
+    }
+
+    in.close();
+}
+
+    
+
+void searcWithPrice() {
+
+}
+
+void searcWithCategoryAndPrice() {
+
+}
+
 
 void Store::printCategories() {
     ifstream in;
@@ -307,7 +392,7 @@ void Store::addNewProduct() {
                 x.setBrand(brand);
                 x.setCostPrice(costPrice);
 
-                x.update();
+                updateNewProduct(x);
                 cout << "Added succesfully!\n";
                 n--;
                 count++;
@@ -319,6 +404,5 @@ void Store::addNewProduct() {
         }
     
 }
-
 
 

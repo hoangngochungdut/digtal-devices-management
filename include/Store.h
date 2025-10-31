@@ -10,11 +10,14 @@ class Store{
         void import();
         void sell();
         void showStatictics();
-        
+        void search();
+        void searchWithCategory();
+
         void printCategories();
         void addNewCategory();
         
         void printProducts();
         void addNewProduct();
+        
 };
 #endif
