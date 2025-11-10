@@ -1,0 +1,7 @@
+APP;Apple
+SAM;Samsung
+OPP;Oppo
+LEN;Lenovo
+XIA;Xiaomi
+DEL;Dell 
+LOG;Logitech

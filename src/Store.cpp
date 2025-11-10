@@ -1,8 +1,12 @@
+#include "Category.h"
+#include "Brand.h"
 #include "Store.h"
 #include "Product.h"
 #include "Item.h"
 #include "string_util.h"
 #include "file_util.h"
+#include "menu.h"
+#include "LinkList.h"
 
 #include <iostream>
 #include <vector>
@@ -45,9 +49,9 @@ void Store::import() {
             continue;
         }
 
-        if (!matchedNameID(name, ID)) {
+        if (existedName(name) && !matchedNameID(name, ID)) {
             i--;
-            cout << "This ID already existed. Please try again\n";
+            cout << "This ID does not match with product name. Please try again\n";
             continue;
         }
 
@@ -196,11 +200,26 @@ void Store::showStatictics() {
 
 }
 
-void Store::search() {
+void Store::search() { 
+    int option;
+    int exit;
+    do {
+        exit = 0;
+        searchMenu(); 
+        cout << "Please enter your option: ";
+        cin >> option;
+        cin.ignore();
+        switch(option) {
+            case 0: cout << "Exited!\n"; exit = 1; break;
+            case 1: searchWithCategory(); break;
+            case 2: searchWithPrice(); break;
+            case 3: searchWithCategoryAndPrice(); break;
+        }
+    } while(!exit);
     
 }
 
-void Store::searchWithCategory() {
+void searchWithCategory() {
     string category;
     cout << "Enter category: ";
     getline(cin, category);
@@ -217,7 +236,6 @@ void Store::searchWithCategory() {
         getline(ss, name, ';');
         getline(ss, brand, ';');
 
-        // kiểm tra ID có trùng 3 ký tự đầu không
         if (_ID.size() >= 3 && _ID.substr(0, 3) == ID) {
             string sellPrice, quant;
 
@@ -230,7 +248,7 @@ void Store::searchWithCategory() {
                 if (ID1 == _ID) {
                     getline(ss1, sellPrice, ';');
                     getline(ss1, quant, ';');
-                    break; // tìm thấy rồi thì dừng
+                    break;
                 }
             }
             in1.close();
@@ -245,13 +263,14 @@ void Store::searchWithCategory() {
     in.close();
 }
 
+void searchWithPrice() {
+    int price;
+    cout << "Enter price: ";
+    cin >> price;
     
-
-void searcWithPrice() {
-
 }
 
-void searcWithCategoryAndPrice() {
+void searchWithCategoryAndPrice() {
 
 }
 
@@ -260,149 +279,212 @@ void Store::printCategories() {
     ifstream in;
     in.open("data/categoryList.txt", ios::in);
     string line;
-    int count = 1;
+    LinkList<Category> categories;
     while(getline(in, line)) {
         stringstream ss(line);
         string ID, name;
-
         getline(ss, ID, ';');
-        getline(ss, name, ';');
-        cout << count << ". " << name << "\n";
-        count++;
+        getline(ss, name);
+
+        Category category;
+        category.setCategoryID(ID);
+        category.setCategoryName(name);
+        categories.add(category);
     }
     in.close();
+
+    if(!categories.isEmpty()) categories.display();
+    else cout << "Empty list!\n";
 }
 
 void Store::addNewCategory() {
-    int n, count = 1;
-    cout << "Enter the number of categories you want to add (enter 0 to escape): ";
+    int n;
+    cout << "Enter the number of categories you want to add (enter 0 to esc e): ";
     cin >> n;
-    if (n == 0) cout << "Escaped!\n";
     cin.ignore();
-    while(n) {
-        ifstream in;
-        in.open("data/categoryList.txt", ios::in);
-        cout << count << ".\n";
-        string name, ID;
-        cout << "Enter category name (enter q to skip): ";
-        getline(cin, name);
-        if (name == "q") {
-            n--;
-            count++;
-            cout << "Skipped!\n";
-            continue;
-        }
-        cout << "Enter category ID (enter q to skip): ";
-        getline(cin, ID);
-        if (ID == "q") {
-            n--;
-            count++;
-            cout << "Skipped!\n";
-            continue;
-        }
-        
-        bool isDuplicate = false;
-        string line;
-        while(getline(in, line)) {
-            stringstream ss(line);
-            string _name, _ID;
-            getline(ss, _ID, ';');
-            getline(ss, _name, ';');
-            if (upper(ID) == upper(_ID) || upper(name) == upper(_name)) {
-                cout << "This category name or ID already existed, please try again!\n";
-                isDuplicate = true;
-                break;
-            }
-        }
-        in.close();
+    if (n == 0) cout << "Escaped!\n";
 
-        if (!isDuplicate) {
-            ofstream out;
-            out.open("data/categoryList.txt", ios::app);
-            out << ID << ";" << capitalize(name) << "\n";
-            cout << "Added succesfully!\n";
+    //nhap thong tin
+    int count = 0;
+    LinkList<Category> categories;
+    while(n) {
+        cout << "Category " << count + 1 << ":\n";
+        string ID, name;
+        cout << "Enter category ID: ";
+        getline(cin, ID);
+        cout << "Enter category name: "; 
+        getline(cin, name);
+        if (!existedCategoryID(ID) && !existedCategoryName(name)) {
+            Category category;
+            category.setCategoryID(ID);
+            category.setCategoryName(name);
+
+            categories.add(category);
             n--;
-            count++;
-            out.close();
-        }
+            count++; 
+        } else cout << "This ID or name is already existed, Please try again!\n";
     }
+
+    //xuat thong tin ra file
+    updateCategoryList(categories);
+}
+
+void Store::categoryOptions() { 
+    int option;
+    int exit;
+    do {
+        exit = 0;
+        categoryOptionMenu();
+        cout << "Please enter your option: ";
+        cin >> option;
+        cin.ignore();
+        switch(option) {
+            case 0: cout << "Exited!\n"; exit = 1; break;
+            case 1: addNewCategory(); break;
+            case 2: printCategories(); break;
+        }
+    } while(!exit);
+}
+
+void Store::printBrands() {
+    ifstream in;
+    in.open("data/brandList.txt", ios::in);
+    string line;
+    LinkList<Brand> brands;
+    while(getline(in, line)) {
+        stringstream ss(line);
+        string ID, name;
+        getline(ss, ID, ';');
+        getline(ss, name);
+
+        Brand brand;
+        brand.setBrandID(ID);
+        brand.setBrandName(name);
+        brands.add(brand);
+    }
+    in.close();
+
+    if(!brands.isEmpty()) brands.display();
+    else cout << "Empty list!\n";
+}
+
+void Store::addNewBrand() {
+    int n;
+    cout << "Enter the number of brands you want to add (enter 0 to esc e): ";
+    cin >> n;
+    cin.ignore();
+    if (n == 0) cout << "Escaped!\n";
+
+    //nhap thong tin
+    int count = 0;
+    LinkList<Brand> brands;
+    while(n) {
+        cout << "Brand " << count + 1 << ":\n";
+        string ID, name;
+        cout << "Enter brand ID: ";
+        getline(cin, ID);
+        cout << "Enter brand name: "; 
+        getline(cin, name);
+        if (!existedBrandID(ID) && !existedBrandName(name)) {
+            Brand brand;
+            brand.setBrandID(ID);
+            brand.setBrandName(name);
+
+            brands.add(brand);
+            n--;
+            count++; 
+        } else cout << "This ID or name is already existed, Please try again!\n";
+    }
+ 
+    //xuat thong tin ra file
+    updateBrandList(brands);
+}
+
+void Store::brandOptions() {
+    int option;
+    int exit;
+    do {
+        exit = 0;
+        brandOptionMenu();
+        cout << "Please enter your option: ";
+        cin >> option;
+        cin.ignore();
+        switch(option) {
+            case 0: cout << "Exited!\n"; exit = 1; break;
+            case 1: addNewBrand(); break;
+            case 2: printBrands(); break;
+        }
+    } while(!exit); 
 }
 
 void Store::printProducts() {
     ifstream in;
     in.open("data/productList.txt", ios::in);
     string line;
-    int count = 1;
+    LinkList<Product> products;
     while(getline(in, line)) {
         stringstream ss(line);
-        string ID, name, brand;
-
+        string ID, name;
         getline(ss, ID, ';');
-        getline(ss, name, ';');
-        getline(ss, brand, ';');
-        cout << count << ". " << name << ", " << brand << "\n";
-        count++;
+        getline(ss, name);
+
+        Product product;
+        product.setProductID(ID);
+        product.setProductName(name);
+        products.add(product);
     }
     in.close();
+
+    if(!products.isEmpty()) products.display();
+    else cout << "Empty list!\n";
 }
 
 void Store::addNewProduct() {
-    int n, count = 1;
-    cout << "Enter the number of products you want to add (enter 0 to escape): ";
+    int n;
+    cout << "Enter the number of brands you want to add (enter 0 to esc e): ";
     cin >> n;
-    if (n == 0) cout << "Escaped!\n";
     cin.ignore();
+    if (n == 0) cout << "Escaped!\n";
 
+    //nhap thong tin
+    int count = 0;
+    LinkList<Brand> brands;
     while(n) {
-        cout << count << ".\n";
-        string name, ID, brand, line;
-        int costPrice;
-
-        cout << "Enter product name (enter q to skip): ";
+        cout << "Brand " << count + 1 << ":\n";
+        string ID, name;
+        cout << "Enter brand ID: ";
+        getline(cin, ID);
+        cout << "Enter brand name: "; 
         getline(cin, name);
-        if (name == "q") {
+        if (!existedBrandID(ID) && !existedBrandName(name)) {
+            Brand brand;
+            brand.setBrandID(ID);
+            brand.setBrandName(name);
+
+            brands.add(brand);
             n--;
-            count++;
-            cout << "Skipped!\n";
-            continue;
-        }
-
-        if (!existedName(name)) {
-
-            cout << "Enter product ID (enter q to skip): ";
-            getline(cin, ID);
-            
-            if (ID == "q") {
-                n--;
-                count++;
-                cout << "Skipped!\n";
-                continue;
-            }
-
-            if (!existedID(ID)) {
-                cout << "Enter the product's brand: ";
-                getline(cin, brand);
-
-                cout << "Enter cost price: ";
-                cin >> costPrice;
-                cin.ignore();
-                Product x;
-                x.setName(name);
-                x.setID(ID);
-                x.setBrand(brand);
-                x.setCostPrice(costPrice);
-
-                updateNewProduct(x);
-                cout << "Added succesfully!\n";
-                n--;
-                count++;
-                
-                }
-            }
-
-        
-        }
-    
+            count++; 
+        } else cout << "This ID or name is already existed, Please try again!\n";
+    }
+ 
+    //xuat thong tin ra file
+    updateBrandList(brands);
 }
 
+void Store::productOptions() {
+    int option;
+    int exit;
+    do {
+        exit = 0;
+        productOptionMenu();
+        cout << "Please enter your option: ";
+        cin >> option;
+        cin.ignore();
+        switch(option) {
+            case 0: cout << "Exited!\n"; exit = 1; break;
+            case 1: addNewProduct(); break;
+            case 2: printProducts(); break;
+        }
+    } while(!exit); 
+}
 

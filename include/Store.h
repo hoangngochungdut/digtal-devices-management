@@ -11,13 +11,22 @@ class Store{
         void sell();
         void showStatictics();
         void search();
-        void searchWithCategory();
-
+       
         void printCategories();
         void addNewCategory();
-        
+        void categoryOptions();
+
+        void printBrands();
+        void addNewBrand();
+        void brandOptions();
+
         void printProducts();
         void addNewProduct();
+        void productOptions();
         
 };
+
+void searchWithCategory();
+void searchWithPrice();
+void searchWithCategoryAndPrice();
 #endif

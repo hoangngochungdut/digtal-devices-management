@@ -6,39 +6,17 @@
 class Item: public Product{
     int sellPrice;
     int quantity;
-    int sellTotal;
+    int sellTotal; 
     public:
-        void setQuantity(int a) {
-            this->quantity = a; 
-        }
+        void setQuantity(int a) {this->quantity = a;}
+        void setSellPrice(int a) {this->sellPrice = a;}
+        void setSellTotal() {this->sellTotal = this->sellPrice * this->quantity;}
+        void setCostTotal() {this->costTotal = this->costPrice * this->quantity;}
 
-        int getQuantity() {
-            return this->quantity;
-        }
-
-        void setSellPrice(int a) {
-            this->sellPrice = a;
-        }
-
-        int getSellPrice() {
-            return this->sellPrice;
-        }
-       
-        void setSellTotal() {
-            this->sellTotal = this->sellPrice * this->quantity;
-        }
-
-        int getSellTotal() {
-            return this->sellTotal;
-        }
-//
-        void setCostTotal() {
-            this->costTotal = this->costPrice * this->quantity;
-        }
-
-        int getCostTotal() {
-            return this->costTotal;
-        }
+        int getQuantity() {return this->quantity;}
+        int getSellPrice() {return this->sellPrice;}
+        int getSellTotal() {return this->sellTotal;}
+        int getCostTotal() {return this->costTotal;}
 
     void printInfoAfterSell() {
         Product::printInfo();
@@ -59,6 +37,5 @@ class Item: public Product{
 bool haveSameID(Item a, Item b);
 void subtract(Item &a, Item b);
 void plusInto(Item &a, Item b);
-
 
 #endif

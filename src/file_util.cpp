@@ -242,3 +242,139 @@ string getCategoryID(const string &category) {
     in.close();
     return "";
 }
+
+
+bool existedCategoryID(const string &ID) {
+    ifstream in;
+    in.open("data/categoryList.txt");
+    string line;
+    while(getline(in, line)) {
+        stringstream ss(line);
+        string _ID;
+        getline(ss, _ID, ';');
+        if (upper(ID) == upper(_ID)) {
+            in.close();
+            return true;
+        }    
+    }
+    in.close();
+    return false;
+}
+
+bool existedCategoryName(const string &name) {
+    ifstream in;
+    in.open("data/categoryList.txt");
+    string line;
+    while(getline(in, line)) {
+        stringstream ss(line);
+        string _ID, _name;
+        getline(ss, _ID, ';');
+        if (upper(name) == upper(_name)) {
+            in.close();
+            return true;
+        }    
+    }
+    in.close();
+    return false;   
+}
+
+void updateCategoryList(const LinkList<Category>& categories) {
+    ofstream out;
+    out.open("data/categoryList.txt", ios::app);
+    Node<Category>* temp = categories.getHead();
+    while(temp != nullptr) {
+        out << (temp->data).getCategoryID() << ";" << (temp->data).getCategoryName() << "\n";
+        temp = temp->next;
+    }
+    out.close();
+}
+
+bool existedBrandID(const string &ID) {
+    ifstream in;
+    in.open("data/brandList.txt");
+    string line;
+    while(getline(in, line)) {
+        stringstream ss(line);
+        string _ID;
+        getline(ss, _ID, ';');
+        if (upper(ID) == upper(_ID)) {
+            in.close();
+            return true;
+        }    
+    }
+    in.close();
+    return false;
+}
+
+bool existedBrandName(const string &name) {
+    ifstream in;
+    in.open("data/brandList.txt");
+    string line;
+    while(getline(in, line)) {
+        stringstream ss(line);
+        string _ID, _name;
+        getline(ss, _ID, ';');
+        if (upper(name) == upper(_name)) {
+            in.close();
+            return true;
+        }    
+    }
+    in.close();
+    return false;
+}
+
+void updateBrandList(const LinkList< Brand>& brands) {
+    ofstream out;
+    out.open("data/brandList.txt", ios::app);
+    Node<Brand>* temp = brands.getHead();
+    while(temp != nullptr) {
+        out << (temp->data).getBrandID() << ";" << (temp->data).getBrandName() << "\n";
+        temp = temp->next;
+    }
+    out.close();
+}
+
+bool existedProductID(const string &ID) {
+    ifstream in;
+    in.open("data/productList.txt");
+    string line;
+    while(getline(in, line)) {
+        stringstream ss(line);
+        string _ID;
+        getline(ss, _ID, ';');
+        if (upper(ID) == upper(_ID)) {
+            in.close();
+            return true;
+        }    
+    }
+    in.close();
+    return false;
+}
+
+bool existedProductName(const string &name) {
+    ifstream in;
+    in.open("data/productList.txt");
+    string line;
+    while(getline(in, line)) {
+        stringstream ss(line);
+        string _ID, _name;
+        getline(ss, _ID, ';');
+        if (upper(name) == upper(_name)) {
+            in.close();
+            return true;
+        }    
+    }
+    in.close();
+    return false;
+}
+
+void updateProductList(const LinkList<Product>& products) {
+    ofstream out;
+    out.open("data/productList.txt", ios::app);
+    Node<Product>* temp = products.getHead();
+    while(temp != nullptr) {
+        out << (temp->data).getProductID() << ";" << (temp->data).geProductName() << "\n";
+        temp = temp->next;
+    }
+    out.close();
+}

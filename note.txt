@@ -1,0 +1,19 @@
+1. import:
+- neu import 1 product moi thi khong can nhap cost price ma chi can lay tu file
+- them ham thay doi cost price cua 1 product
+- vi mac dinh sell price cua 1 sp moi = 0 nen co them ham sua sell price
+- sp co roi thi ko can nhap lai thong tin da co
+2. sell:
+- ko can nhap ID
+
+3. search:
+-
+-
+
+4. them hoa don
+
+5. thong ke cac sp lau roi ko ban duoc
+
+6. gio hang
+
+7. bo tri lai giao dien menu, them quan ly don hang

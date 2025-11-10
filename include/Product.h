@@ -6,7 +6,7 @@
 #include <iostream>
 using namespace std;
 
-class Product{
+class Product: public Category{
     protected: 
         string productID;
         string productName;
@@ -14,19 +14,19 @@ class Product{
         int costPrice;
         int costTotal;
     public:
-        void setID(const string &s) {this->productID = s;}
-        string getID() {return this->productID;}
-
-        void setName(const string &s) {this->productName = s;}
-        string getName() {return this->productName;}
-
-        void setBrand(const string &s) {this->productBrand = s;}
-        string getBrand() {return this->productBrand;}
-
+        void setProductID(const string &s) {this->productID = s;}
+        void setProductBrand(const string &s) {this->productBrand = s;}
+        void setProductName(const string &s) {this->productName = s;}
         void setCostPrice(int a) {this->costPrice = a;}
+
+        string getProductID() {return this->productID;}
+        string getProductName() {return this->productName;}
+        string getProductBrand() {return this->productBrand;}
         int getCostPrice() {return this->costPrice;}
         
-        void printInfo();
+        void show() {
+            cout << getProductID() << " - " << getProductName() << "\n";
+        }
         
 };
 
